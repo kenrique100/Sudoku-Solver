@@ -204,4 +204,7 @@ suite("Functional Tests", () => {
         done();
       });
   });
+  after(function()
+        { chai.request(server).get('/') 
+        });
 });

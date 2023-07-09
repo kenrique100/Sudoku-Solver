@@ -21,25 +21,27 @@ module.exports = function (app) {
       console.log("invalid coordinate :>> ");
       res.json({ error: "Invalid coordinate" });
       return;
-    }
-    if (!/[1-9]/i.test(value)) {
-      res.json({ error: "Invalid value" });
-      return;
+    } 
+    if (isNaN(value) || value < 1 || value > 9) {
+    return res.json({ error: 'Invalid value' });
+    
     }
     if (puzzle.length != 81) {
       res.json({ error: "Expected puzzle to be 81 characters long" });
       return;
     }
+    
     if (/[^0-9.]/g.test(puzzle)) {
       res.json({ error: "Invalid characters in puzzle" });
       return;
     }
+    
     let validCol = solver.checkColPlacement(puzzle, row, column, value);
     let validReg = solver.checkRegionPlacement(puzzle, row, column, value);
     let validRow = solver.checkRowPlacement(puzzle, row, column, value);
     let conflicts = [];
     if (validCol && validReg && validRow) {
-      res.json({ valid: true });
+      return res.json({ valid: true });
     } else {
       if (!validRow) {
         conflicts.push("row");
@@ -52,6 +54,7 @@ module.exports = function (app) {
       }
       res.json({ valid: false, conflict: conflicts });
     }
+    
   });
 
   app.route("/api/solve").post((req, res) => {
